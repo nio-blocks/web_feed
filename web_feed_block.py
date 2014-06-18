@@ -14,9 +14,15 @@ from feedparser import parse
 
 
 class FeedEntrySignal(Signal):
-    def __init__(self, data):
-        for k in data:
-            setattr(self, k, data[k])
+    def __init__(self, entry, feed):
+        for k in entry:
+            setattr(self, k, entry[k])
+        for k in feed:
+            setattr(self, "feed_" + k, feed[k])
+        # feedparser will give all entries an "updated" property even if
+        # it doesn't exist, so make sure we save it.
+        if "updated" not in entry:
+            setattr(self, "updated", entry.updated)
 
 
 class FeedURLField(PropertyHolder):
@@ -64,7 +70,7 @@ class WebFeed(RESTPolling):
             fresh_entries = self._find_fresh_entries(entries)
             signals = []
             for entry in fresh_entries:
-                signals.append(self._create_signal(entry))
+                signals.append(self._create_signal(entry, response.feed))
             if signals:
                 self.notify_signals(signals)
             # After a successful poll, set _last_time for the next poll.
@@ -107,8 +113,8 @@ class WebFeed(RESTPolling):
             self._logger.warning("Entry's updated time is not available")
         return seconds_from_epoch
 
-    def _create_signal(self, entry):
-        return FeedEntrySignal(entry)
+    def _create_signal(self, entry, feed):
+        return FeedEntrySignal(entry, feed)
 
     def _next_feed(self):
         self._index += 1
