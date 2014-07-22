@@ -26,7 +26,7 @@ class FeedEntrySignal(Signal):
 
 
 class FeedURLField(PropertyHolder):
-    feed_url = StringProperty()
+    feed_url = StringProperty(title='URL')
 
 
 @Discoverable(DiscoverableType.block)
@@ -40,9 +40,9 @@ class WebFeed(RESTPolling):
         get_updates (bool): Notify a signal when a feed entry is updated.
 
     """
-    feed_urls = ListProperty(FeedURLField)
-    lookback = TimeDeltaProperty()
-    get_updates = BoolProperty(default=True)
+    feed_urls = ListProperty(FeedURLField, title='Feeds')
+    lookback = TimeDeltaProperty(title='Lookback Period')
+    get_updates = BoolProperty(default=True, title='Notify on Updates?')
 
     def __init__(self):
         super().__init__()
