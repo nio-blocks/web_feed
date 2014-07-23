@@ -4,7 +4,7 @@ from requests import Response
 from datetime import datetime, timedelta
 from web_feed.web_feed_block import WebFeed
 from nio.util.support.block_test_case import NIOBlockTestCase
-from nio.modules.threading.imports import sleep
+from nio.modules.threading import sleep
 
 
 class TestWebFeed(NIOBlockTestCase):
