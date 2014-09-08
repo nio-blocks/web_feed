@@ -20,7 +20,8 @@ class FeedEntrySignal(Signal):
             setattr(self, k, entry[k])
         for k in feed:
             setattr(self, "feed_" + k, feed[k])
-
+        # feedparser will give all entries an "updated" property even if
+        # it doesn't exist, so make sure we save it.
         if "updated" not in entry:
             setattr(self, "updated", entry.updated)
 
