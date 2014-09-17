@@ -1,10 +1,6 @@
 import unittest
-from unittest.mock import patch, MagicMock
-from requests import Response
-from datetime import datetime, timedelta
 from ..web_feed_block import WebFeed
 from nio.util.support.block_test_case import NIOBlockTestCase
-from nio.modules.threading import sleep
 
 
 class TestWebFeed(NIOBlockTestCase):

@@ -15,6 +15,7 @@ from feedparser import parse
 
 class FeedEntrySignal(Signal):
     def __init__(self, entry, feed):
+        super().__init__()
         for k in entry:
             setattr(self, k, entry[k])
         for k in feed:
