@@ -1,6 +1,6 @@
 import unittest
 from ..web_feed_block import WebFeed
-from nio.util.support.block_test_case import NIOBlockTestCase
+from nio.testing.block_test_case import NIOBlockTestCase
 
 
 class TestWebFeed(NIOBlockTestCase):
