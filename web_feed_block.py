@@ -1,11 +1,11 @@
 from .http_blocks.rest.rest_block import RESTPolling
-from nio.common.discovery import Discoverable, DiscoverableType
-from nio.common.signal.base import Signal
-from nio.metadata.properties.bool import BoolProperty
-from nio.metadata.properties.string import StringProperty
-from nio.metadata.properties.timedelta import TimeDeltaProperty
-from nio.metadata.properties.list import ListProperty
-from nio.metadata.properties.holder import PropertyHolder
+from nio.util.discovery import discoverable
+from nio.signal.base import Signal
+from nio.properties.bool import BoolProperty
+from nio.properties.string import StringProperty
+from nio.properties.timedelta import TimeDeltaProperty
+from nio.properties.list import ListProperty
+from nio.properties.holder import PropertyHolder
 from datetime import datetime
 import time
 import calendar
@@ -27,10 +27,10 @@ class FeedEntrySignal(Signal):
 
 
 class FeedURLField(PropertyHolder):
-    feed_url = StringProperty(title='URL')
+    feed_url = StringProperty(title='URL', default='')
 
 
-@Discoverable(DiscoverableType.block)
+@discoverable
 class WebFeed(RESTPolling):
     """ A block that gets entries from a web feed.
 
@@ -42,7 +42,7 @@ class WebFeed(RESTPolling):
 
     """
     feed_urls = ListProperty(FeedURLField, title='Feeds')
-    lookback = TimeDeltaProperty(title='Lookback Period')
+    lookback = TimeDeltaProperty(default={"seconds": 90}, title='Lookback Period')
     get_updates = BoolProperty(default=True, title='Notify on Updates?')
 
     def __init__(self):
@@ -54,9 +54,9 @@ class WebFeed(RESTPolling):
 
     def configure(self, context):
         super().configure(context)
-        lookback_seconds = self.lookback.total_seconds()
+        lookback_seconds = self.lookback().total_seconds()
         now_minus_lookback = calendar.timegm(time.gmtime()) - lookback_seconds
-        for url in self.feed_urls:
+        for url in self.feed_urls():
             self._last_time.append(now_minus_lookback)
             self._next_last_time.append(now_minus_lookback)
             self._ids.append([])
@@ -66,7 +66,7 @@ class WebFeed(RESTPolling):
         instead of requests.
         """
         try:
-            response = parse(self.feed_urls[self._index].feed_url)
+            response = parse(self.feed_urls[self._index].feed_url())
             entries = response.entries
             fresh_entries = self._find_fresh_entries(entries)
             signals = []
@@ -84,7 +84,7 @@ class WebFeed(RESTPolling):
                 True
             )
         except Exception as e:
-            self._logger.error("Error when polling feed: {0}".format(e))
+            self.logger.error("Error when polling feed: {0}".format(e))
             # If there was an error, reset _next_last_time
             self._next_last_time[self._index] = self._last_time[self._index]
             self._retry_poll(paging=False)
@@ -94,7 +94,7 @@ class WebFeed(RESTPolling):
         fresh_entries = [e for e in entries \
                          if self._get_entry_time(e) > self._last_time[self._index]]
         # Filter out repeat ids if not getting updates.
-        if not self.get_updates:
+        if not self.get_updates():
             fresh_entries = [e for e in fresh_entries \
                              if not e.get('id') or
                              e.get('id') not in self._ids[self._index]]
@@ -111,7 +111,7 @@ class WebFeed(RESTPolling):
             if seconds_from_epoch > self._next_last_time[self._index]:
                 self._next_last_time[self._index] = seconds_from_epoch
         except:
-            self._logger.warning("Entry's updated time is not available")
+            self.logger.warning("Entry's updated time is not available")
         return seconds_from_epoch
 
     def _create_signal(self, entry, feed):
@@ -119,5 +119,5 @@ class WebFeed(RESTPolling):
 
     def _next_feed(self):
         self._index += 1
-        if self._index >= len(self.feed_urls):
+        if self._index >= len(self.feed_urls()):
             self._index = 0
