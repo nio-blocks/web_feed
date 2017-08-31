@@ -32,7 +32,7 @@ Dependencies
 
 Output Example
 --------------
-The following is a list of commonly include attributes, but note that not all will be included on every signal:
+The following is a list of commonly included attributes, but note that not all will be included on every signal:
 ```
 {
   updated: datetime,
