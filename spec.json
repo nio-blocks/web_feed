@@ -1,10 +1,73 @@
 {
   "nio/WebFeed": {
     "version": "0.0.1",
-    "description": "",
-    "inputs": {},
-    "outputs": {},
-    "properties": {},
+    "description": "Polls web feeds for posts.",
+    "properties": {
+      "feed_urls": {
+        "title": "Feeds",
+        "type": "ListType",
+        "description": "URLs of feeds to poll.",
+        "default": []
+      },
+      "get_updates": {
+        "title": "Notify on Updates?",
+        "type": "BoolType",
+        "description": "When True, an attempt is made to output a signal when a post is updated.",
+        "default": true
+      },
+      "include_query": {
+        "title": "Include Query Field",
+        "type": "StringType",
+        "description": "Whether to include queries in request to URLs.",
+        "default": null
+      },
+      "lookback": {
+        "title": "Lookback Period",
+        "type": "TimeDeltaType",
+        "description": "On block start, look back this amount of time to grab old posts.",
+        "default": {
+          "seconds": 90
+        }
+      },
+      "polling_interval": {
+        "title": "Polling Interval",
+        "type": "TimeDeltaType",
+        "description": "How often API is polled. When using more than one query. Each query will be polled at a period equal to the *polling interval* times the number of queries.",
+        "default": {
+          "seconds": 20
+        }
+      },
+      "queries": {
+        "title": "Query Strings",
+        "type": "ListType",
+        "description": "Queries to include on request to API.",
+        "default": []
+      },
+      "retry_interval": {
+        "title": "Retry Interval",
+        "type": "TimeDeltaType",
+        "description": "When a url request fails, how long to wait before attempting to try again.",
+        "default": {
+          "seconds": 60
+        }
+      },
+      "retry_limit": {
+        "title": "Retry Limit",
+        "type": "IntType",
+        "description": "Number of times to retry on a poll.",
+        "default": 3
+      }
+    },
+    "inputs": {
+      "default": {
+        "description": "Any list of signals."
+      }
+    },
+    "outputs": {
+      "default": {
+        "description": "Creates a new signal for each Feed Post. Every field on the feed post will become a signal attribute. [feedparser](https://pythonhosted.org/feedparser/index.html) has documentation on what fields can be expected from [rss](https://pythonhosted.org/feedparser/common-rss-elements.html) and [atom](https://pythonhosted.org/feedparser/common-atom-elements.html) feeds. Feed fields will be prepended with `feed_`. The attribute `updated` will be set even if the feed format does not have it (ex. for rss feeds `updated` is set to `pubDate`."
+      }
+    },
     "commands": {}
   }
 }
