@@ -1,16 +1,13 @@
-from .http_blocks.rest.rest_block import RESTPolling
+import calendar
+import time
+from feedparser import parse
+
 from nio.util.discovery import discoverable
 from nio.signal.base import Signal
-from nio.properties.bool import BoolProperty
-from nio.properties.string import StringProperty
-from nio.properties.timedelta import TimeDeltaProperty
-from nio.properties.list import ListProperty
-from nio.properties.holder import PropertyHolder
-from datetime import datetime
-import time
-import calendar
+from nio.properties import BoolProperty, StringProperty, TimeDeltaProperty, \
+    ListProperty, PropertyHolder, VersionProperty
 
-from feedparser import parse
+from .rest_polling.rest_polling_base import RESTPolling
 
 
 class FeedEntrySignal(Signal):
@@ -42,15 +39,17 @@ class WebFeed(RESTPolling):
 
     """
     feed_urls = ListProperty(FeedURLField, title='Feeds')
-    lookback = TimeDeltaProperty(default={"seconds": 90}, title='Lookback Period')
+    lookback = TimeDeltaProperty(
+        default={"seconds": 90}, title='Lookback Period')
     get_updates = BoolProperty(default=True, title='Notify on Updates?')
+    version = VersionProperty('0.0.1')
 
     def __init__(self):
         super().__init__()
         self._last_time = []
         self._next_last_time = []
         self._ids = []
-        self._index = 0 # Used to keep track of what feed is being polled.
+        self._index = 0  # Used to keep track of what feed is being polled.
 
     def configure(self, context):
         super().configure(context)
@@ -91,11 +90,12 @@ class WebFeed(RESTPolling):
 
     def _find_fresh_entries(self, entries):
         """Filter down entries to only fresh entries."""
-        fresh_entries = [e for e in entries \
-                         if self._get_entry_time(e) > self._last_time[self._index]]
+        fresh_entries = [e for e in entries
+                         if self._get_entry_time(e) >
+                         self._last_time[self._index]]
         # Filter out repeat ids if not getting updates.
         if not self.get_updates():
-            fresh_entries = [e for e in fresh_entries \
+            fresh_entries = [e for e in fresh_entries
                              if not e.get('id') or
                              e.get('id') not in self._ids[self._index]]
             new_ids = [e.get('id') for e in entries]

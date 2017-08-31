@@ -1,7 +1,7 @@
 {
   "nio/WebFeed": {
     "language": "Python",
-    "version": "0.0.1",
-    "url": "git://github.com/nio-blocks/web_feed.git"
+    "url": "git://github.com/nio-blocks/web_feed.git",
+    "version": "0.0.1"
   }
 }
