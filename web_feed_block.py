@@ -42,7 +42,7 @@ class WebFeed(RESTPolling):
     lookback = TimeDeltaProperty(
         default={"seconds": 90}, title='Lookback Period')
     get_updates = BoolProperty(default=True, title='Notify on Updates?')
-    version = VersionProperty("1.0.0")
+    version = VersionProperty("1.0.1")
 
     def __init__(self):
         super().__init__()
