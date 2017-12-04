@@ -4,6 +4,7 @@ from feedparser import parse
 
 from nio.util.discovery import discoverable
 from nio.signal.base import Signal
+from nio.modules.scheduler import Job
 from nio.properties import BoolProperty, StringProperty, TimeDeltaProperty, \
     ListProperty, PropertyHolder, VersionProperty
 
@@ -38,7 +39,7 @@ class WebFeed(RESTPolling):
         get_updates (bool): Notify a signal when a feed entry is updated.
 
     """
-    feed_urls = ListProperty(FeedURLField, title='Feeds')
+    feed_urls = ListProperty(FeedURLField, title='Feeds', default=[])
     lookback = TimeDeltaProperty(
         default={"seconds": 90}, title='Lookback Period')
     get_updates = BoolProperty(default=True, title='Notify on Updates?')
