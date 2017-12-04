@@ -1,6 +1,6 @@
 {
   "nio/WebFeed": {
-    "version": "1.0.1",
+    "version": "1.0.2",
     "description": "Polls web feeds for posts.",
     "categories": [
       "Web Data"
