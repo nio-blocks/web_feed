@@ -66,7 +66,7 @@ class WebFeed(RESTPolling):
         instead of requests.
         """
         try:
-            response = parse(self.feed_urls[self._index].feed_url())
+            response = parse(self.feed_urls()[self._index].feed_url())
             entries = response.entries
             fresh_entries = self._find_fresh_entries(entries)
             signals = []
