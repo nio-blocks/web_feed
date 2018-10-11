@@ -28,7 +28,7 @@ None
 Dependencies
 ------------
 -   [feedparser](https://pypi.python.org/pypi/feedparser)
--   [RESTPolling Block](https://github.com/nio-blocks/http_blocks/blob/master/rest/rest_block.py)
+-   [RESTPolling Block](https://github.com/nio-blocks/rest_polling/blob/master/rest_polling_base.py)
 
 Output Example
 --------------
